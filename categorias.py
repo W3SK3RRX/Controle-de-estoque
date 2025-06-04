@@ -22,23 +22,42 @@ def abrir_cadastro_categoria(usuario_logado):
     nome = tk.Entry(input_frame, width=30)
     nome.grid(row=0, column=1, padx=5, pady=5)
 
-    # ---------- Tabela de categorias ----------
+        # ---------- Tabela de categorias aprimorada ----------
     tabela_frame = tk.Frame(frame, bg="white")
     tabela_frame.pack(pady=10, fill="both", expand=True)
 
+    style = ttk.Style()
+    style.theme_use("clam")  # Visual mais agradável
+    style.configure("Treeview",
+                    background="white",
+                    foreground="black",
+                    rowheight=30,
+                    fieldbackground="white",
+                    font=("Arial", 10))
+    style.configure("Treeview.Heading",
+                    background="#4CAF50",
+                    foreground="white",
+                    font=("Arial", 11, "bold"))
+    style.map('Treeview', background=[('selected', '#3399FF')])
+
     colunas = ("id", "nome")
     tabela = ttk.Treeview(tabela_frame, columns=colunas, show="headings")
+
+    # Cabeçalhos
     tabela.heading("id", text="ID")
     tabela.heading("nome", text="Categoria")
-    tabela.column("id", width=50, anchor="center")
-    tabela.column("nome", width=300)
 
-    tabela.pack(fill="both", expand=True)
+    # Largura e alinhamento das colunas
+    tabela.column("id", width=60, anchor="center")
+    tabela.column("nome", width=400, anchor="center")
+
+    tabela.pack(side="left", fill="both", expand=True)
 
     # Scrollbar
     scrollbar = ttk.Scrollbar(tabela_frame, orient="vertical", command=tabela.yview)
     tabela.configure(yscrollcommand=scrollbar.set)
     scrollbar.pack(side="right", fill="y")
+
 
     def carregar_categorias():
         for row in tabela.get_children():

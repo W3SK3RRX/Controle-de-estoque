@@ -55,7 +55,17 @@ def abrir_dashboard(usuario_logado):
 
     tk.Label(header, text="Açaí", font=("Segoe UI", 22, "bold"), bg="#441858", fg="white").pack()
     tk.Label(header, text=f"Bem-vindo, {usuario_logado}", font=("Segoe UI", 12), bg="#441858", fg="white").pack()
-    tk.Label(header, text=datetime.now().strftime("%d/%m/%Y %H:%M"), font=("Segoe UI", 10), bg="#441858", fg="white").pack()
+    # Label para data e hora
+    label_hora = tk.Label(header, font=("Segoe UI", 10), bg="#441858", fg="white")
+    label_hora.pack()
+
+    # Função para atualizar data e hora em tempo real
+    def atualizar_hora():
+        agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        label_hora.config(text=agora)
+        label_hora.after(1000, atualizar_hora)  # atualiza a cada 1000 ms (1 segundo)
+
+    atualizar_hora()
 
     # ---------- Indicadores ----------
     frame_info = tk.Frame(janela, bg="#eeeeee", pady=20)

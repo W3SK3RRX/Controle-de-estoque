@@ -15,51 +15,45 @@ def abrir_cadastro_produto(usuario_logado):
     frame = tk.Frame(janela, bg="white", bd=3, relief="ridge")
     frame.pack(padx=20, pady=20, fill="both", expand=True)
 
+    # Título
     tk.Label(
-        frame, text="Cadastro de Produto", 
-        font=("Arial", 16, "bold"), 
+        frame, text="Cadastro de Produto",
+        font=("Arial", 18, "bold"),
         bg="white", fg="#333"
-    ).grid(row=0, column=0, columnspan=2, pady=(15, 10))
+    ).pack(pady=(15, 10))
 
-    # Labels
-    labels = [
-        "Nome:",
-        "Categoria:",
-        "Quantidade:",
-        "Unidade (ex.: kg, un):",
-        "Validade (AAAA-MM-DD):",
-        "Estoque Mínimo:"
+    form_frame = tk.Frame(frame, bg="white")
+    form_frame.pack(pady=10)
+
+    # Labels e Inputs
+    campos = [
+        ("Nome:", "nome"),
+        ("Categoria:", "categoria"),
+        ("Quantidade:", "quantidade"),
+        ("Unidade (ex.: kg, un):", "unidade"),
+        ("Validade (AAAA-MM-DD):", "validade"),
+        ("Estoque Mínimo:", "estoque_minimo")
     ]
+
     entries = {}
 
-    for i, texto in enumerate(labels):
+    for i, (label_text, key) in enumerate(campos):
         tk.Label(
-            frame, text=texto, 
-            bg="white", fg="#555", 
-            font=("Arial", 10)
-        ).grid(row=i + 1, column=0, sticky="e", padx=10, pady=8)
+            form_frame, text=label_text,
+            bg="white", fg="#555",
+            font=("Arial", 10, "bold")
+        ).grid(row=i, column=0, sticky="e", padx=10, pady=8)
 
-    # Campos de entrada
-    entries['nome'] = tk.Entry(frame, width=32)
-    entries['nome'].grid(row=1, column=1, pady=5, padx=10)
+        if key == "categoria":
+            entry = ttk.Combobox(form_frame, width=30, state="readonly")
+            entry['values'] = obter_categorias()
+        else:
+            entry = tk.Entry(form_frame, width=32)
 
-    # Dropdown para categorias
-    entries['categoria'] = ttk.Combobox(frame, width=30, state="readonly")
-    entries['categoria']['values'] = obter_categorias()
-    entries['categoria'].grid(row=2, column=1, pady=5, padx=10)
+        entry.grid(row=i, column=1, pady=5, padx=10)
+        entries[key] = entry
 
-    entries['quantidade'] = tk.Entry(frame, width=32)
-    entries['quantidade'].grid(row=3, column=1, pady=5, padx=10)
-
-    entries['unidade'] = tk.Entry(frame, width=32)
-    entries['unidade'].grid(row=4, column=1, pady=5, padx=10)
-
-    entries['validade'] = tk.Entry(frame, width=32)
-    entries['validade'].grid(row=5, column=1, pady=5, padx=10)
-
-    entries['estoque_minimo'] = tk.Entry(frame, width=32)
-    entries['estoque_minimo'].grid(row=6, column=1, pady=5, padx=10)
-
+    # Função de salvar
     def salvar():
         try:
             conn = db.conectar()
@@ -78,7 +72,10 @@ def abrir_cadastro_produto(usuario_logado):
             conn.commit()
             conn.close()
 
-            log_helper.registrar(usuario_logado, "Cadastro de Produto", f"Produto '{entries['nome'].get()}' cadastrado.")
+            log_helper.registrar(
+                usuario_logado, "Cadastro de Produto",
+                f"Produto '{entries['nome'].get()}' cadastrado."
+            )
             messagebox.showinfo("Sucesso", "Produto cadastrado com sucesso!")
             janela.destroy()
 
@@ -86,21 +83,23 @@ def abrir_cadastro_produto(usuario_logado):
             messagebox.showerror("Erro", f"Erro ao salvar: {e}")
 
     # Botões
-    botao_salvar = tk.Button(
-        frame, text="Salvar", width=15, 
-        bg="#4CAF50", fg="white", 
-        font=("Arial", 10, "bold"), 
-        command=salvar
-    )
-    botao_salvar.grid(row=8, column=0, pady=20)
+    botoes_frame = tk.Frame(frame, bg="white")
+    botoes_frame.pack(pady=20)
 
-    botao_cancelar = tk.Button(
-        frame, text="Cancelar", width=15, 
-        bg="#f44336", fg="white", 
-        font=("Arial", 10, "bold"), 
+    tk.Button(
+        botoes_frame, text="Salvar", width=15,
+        bg="#4CAF50", fg="white",
+        font=("Arial", 10, "bold"),
+        command=salvar
+    ).grid(row=0, column=0, padx=10)
+
+    tk.Button(
+        botoes_frame, text="Cancelar", width=15,
+        bg="#f44336", fg="white",
+        font=("Arial", 10, "bold"),
         command=janela.destroy
-    )
-    botao_cancelar.grid(row=8, column=1, pady=20)
+    ).grid(row=0, column=1, padx=10)
+
 
 
 def obter_categorias():
@@ -164,6 +163,26 @@ def abrir_listagem_produtos(usuario_logado):
     scrollbar = ttk.Scrollbar(tree, orient="vertical", command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
     scrollbar.pack(side="right", fill="y")
+
+        # ===============================
+    # 🔵 Legenda das Cores
+    legenda_frame = tk.Frame(frame, bg="white")
+    legenda_frame.pack(pady=(0, 10))
+
+    tk.Label(legenda_frame, text="Legenda:", bg="white", font=("Arial", 10, "bold")).grid(row=0, column=0, padx=5)
+
+    tk.Label(legenda_frame, bg="#d4edda", width=2, height=1, bd=1, relief="solid").grid(row=0, column=1)
+    tk.Label(legenda_frame, text="Validade OK", bg="white").grid(row=0, column=2, padx=5)
+
+    tk.Label(legenda_frame, bg="#fff3cd", width=2, height=1, bd=1, relief="solid").grid(row=0, column=3)
+    tk.Label(legenda_frame, text="Vence em até 7 dias", bg="white").grid(row=0, column=4, padx=5)
+
+    tk.Label(legenda_frame, bg="#f8d7da", width=2, height=1, bd=1, relief="solid").grid(row=0, column=5)
+    tk.Label(legenda_frame, text="Vencido", bg="white").grid(row=0, column=6, padx=5)
+
+    tk.Label(legenda_frame, bg="white", width=2, height=1, bd=1, relief="solid").grid(row=0, column=7)
+    tk.Label(legenda_frame, text="Sem validade", bg="white").grid(row=0, column=8, padx=5)
+
 
     # Função para carregar categorias no Combobox
     def carregar_categorias():

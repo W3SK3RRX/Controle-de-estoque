@@ -74,7 +74,7 @@ def abrir_listagem_usuarios(usuario_logado):
     tabela.heading("nome", text="Nome")
 
     tabela.column("id", width=50, anchor="center")
-    tabela.column("nome", width=300, anchor="w")
+    tabela.column("nome", width=300, anchor="center")  # <-- Centralizado
 
     tabela.pack(fill="both", expand=True)
 
