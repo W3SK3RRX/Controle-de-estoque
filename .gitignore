@@ -1,0 +1,49 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database files
+#*.db
+#*.sqlite3
+
+# Backup files
+#/backups/
+#*.bak
+#*.backup
+
+# Logs
+#*.log
+#logs/
+
+# Config / Environment
+.env
+*.env
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos temporários
+*.swp
+*.swo
+*.tmp
+~$*
+
+# Build / distribuição
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.env/
+env/
+ENV/
