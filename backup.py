@@ -1,25 +1,19 @@
+# backup.py
 import os
 import shutil
 from datetime import datetime
 
-# 🔗 Caminho do arquivo do banco de dados (ajuste conforme seu projeto)
-caminho_banco = os.path.join(os.getcwd(), "estoque.db")  # Exemplo, se estiver na mesma pasta
+def realizar_backup():
+    origem = "estoque.db"
+    destino_dir = "backups"
+    if not os.path.exists(destino_dir):
+        os.makedirs(destino_dir)
 
-# 📂 Pasta onde os backups serão armazenados
-pasta_backup = os.path.join(os.getcwd(), "backups")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    destino = os.path.join(destino_dir, f"estoque_backup_{timestamp}.db")
 
-# 🏗️ Cria a pasta de backup se não existir
-os.makedirs(pasta_backup, exist_ok=True)
+    shutil.copy2(origem, destino)
+    print(f"Backup criado: {destino}")
 
-# 📅 Nome do backup com data e hora
-nome_backup = f"backup_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.db"
-
-# 🔗 Caminho completo do arquivo de backup
-caminho_backup = os.path.join(pasta_backup, nome_backup)
-
-# 🗄️ Copia o banco para a pasta de backup
-try:
-    shutil.copy2(caminho_banco, caminho_backup)
-    print(f"✅ Backup realizado com sucesso: {caminho_backup}")
-except Exception as e:
-    print(f"❌ Erro ao realizar backup: {e}")
+if __name__ == "__main__":
+    realizar_backup()
