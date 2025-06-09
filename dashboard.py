@@ -9,7 +9,7 @@ import categorias  # Importe seu módulo de categorias aqui (onde está o abrir_
 
 def abrir_dashboard(usuario_logado):
     janela = tk.Tk()
-    janela.title("Dashboard - Sistema de Gestão de Estoque")
+    janela.title("Dashboard - Sistema de Gestão de Estoque - Senhor Açaí")
     janela.state('zoomed')
     janela.configure(bg="#eeeeee")
 
@@ -50,13 +50,19 @@ def abrir_dashboard(usuario_logado):
         return total
 
     # ---------- Cabeçalho ----------
-    header = tk.Frame(janela, bg="#441858", pady=20)
+    header = tk.Frame(janela, bg="#790071", pady=20)
     header.pack(fill="x")
 
-    tk.Label(header, text="Açaí", font=("Segoe UI", 22, "bold"), bg="#441858", fg="white").pack()
-    tk.Label(header, text=f"Bem-vindo, {usuario_logado}", font=("Segoe UI", 12), bg="#441858", fg="white").pack()
+    # Carregar e redimensionar a logo
+    logo = tk.PhotoImage(file="media/logo.png")
+    logo = logo.subsample(4, 4)  # Reduz a imagem para 1/4 do tamanho original
+    logo_label = tk.Label(header, image=logo, bg="#790071")
+    logo_label.image = logo  # Manter referência para evitar garbage collection
+    logo_label.pack()
+    
+    tk.Label(header, text=f"Bem-vindo, {usuario_logado}", font=("Segoe UI", 12), bg="#790071", fg="white").pack()
     # Label para data e hora
-    label_hora = tk.Label(header, font=("Segoe UI", 10), bg="#441858", fg="white")
+    label_hora = tk.Label(header, font=("Segoe UI", 10), bg="#790071", fg="white")
     label_hora.pack()
 
     # Função para atualizar data e hora em tempo real
@@ -116,7 +122,7 @@ def abrir_dashboard(usuario_logado):
             font=("Segoe UI", 11, "bold"),
             width=25,
             height=2,
-            bg="#441858",
+            bg="#790071",
             fg="white",
             activebackground="#5d1e78",
             activeforeground="white",
@@ -124,7 +130,7 @@ def abrir_dashboard(usuario_logado):
             bd=3,
             command=comando
         )
-        btn.grid(row=i//2, column=i%2, padx=15, pady=10)
+        btn.grid(row=i//4, column=i%4, padx=15, pady=10)
 
     janela.mainloop()
 

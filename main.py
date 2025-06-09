@@ -26,7 +26,7 @@ criar_usuario_padrao()
 
 # Tela de Login
 janela_login = tk.Tk()
-janela_login.title("Login - Sistema de Controle de Estoque")
+janela_login.title("Login - Sistema de Controle de Estoque - Senhor Açaí")
 
 # Definir janela em tela cheia
 try:
@@ -34,51 +34,66 @@ try:
 except:
     janela_login.attributes('-fullscreen', True)  # Mac
 
+# Carregar e configurar a imagem de fundo
+background_image = tk.PhotoImage(file="media/bg.png")
+background_label = tk.Label(janela_login, image=background_image)
+background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
 # Frame centralizado
-frame = tk.Frame(janela_login, bg="#441858", padx=40, pady=30, relief="raised", bd=3)
+frame = tk.Frame(janela_login, bg="#790071", padx=40, pady=30, relief="raised", bd=3)
 frame.place(relx=0.5, rely=0.5, anchor="center")
 
-# Título
+# Título com fonte moderna
 tk.Label(
     frame,
-    text="Controle de Estoque",
-    font=("Arial", 22, "bold"),
-    bg="#441858",
+    text="Controle de Estoque - Senhor Açaí",
+    font=("Helvetica", 24, "bold"),
+    bg="#790071",
     fg="white"
-).grid(row=0, column=0, columnspan=2, pady=(0, 20))
+).grid(row=0, column=0, columnspan=2, pady=(0, 30))
 
 # Labels e Entradas
-tk.Label(frame, text="Usuário:", font=("Arial", 14), bg="#441858", fg="white").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+tk.Label(frame, text="Usuário:", font=("Arial", 14, "bold"), bg="#790071", fg="white").grid(row=1, column=0, padx=(10, 2), pady=10, sticky="e")
 entrada_usuario = tk.Entry(frame, font=("Arial", 14), width=25)
-entrada_usuario.grid(row=1, column=1, padx=10, pady=10)
+entrada_usuario.grid(row=1, column=1, padx=(2, 10), pady=10)
 
-tk.Label(frame, text="Senha:", font=("Arial", 14), bg="#441858", fg="white").grid(row=2, column=0, padx=10, pady=10, sticky="e")
+tk.Label(frame, text="Senha:", font=("Arial", 14, "bold"), bg="#790071", fg="white").grid(row=2, column=0, padx=(10, 2), pady=10, sticky="e")
 entrada_senha = tk.Entry(frame, font=("Arial", 14), show="*", width=25)
-entrada_senha.grid(row=2, column=1, padx=10, pady=10)
+entrada_senha.grid(row=2, column=1, padx=(2, 10), pady=10)
 
-# Botão Entrar
-tk.Button(
+# Botão Entrar com estilo moderno
+botao_entrar = tk.Button(
     frame,
-    text="Entrar",
-    font=("Arial", 14, "bold"),
-    bg="#2E7D32",
+    text="ENTRAR",
+    font=("Helvetica", 12, "bold"),
+    bg="#8DB038",
     fg="white",
-    padx=10,
-    pady=5,
+    padx=20,
+    pady=10,
+    bd=0,
+    cursor="hand2",
+    activebackground="#7B1FA2",
+    activeforeground="white",
     command=realizar_login
-).grid(row=3, column=0, columnspan=2, pady=20)
+)
+botao_entrar.grid(row=3, column=0, columnspan=2, pady=30)
 
-# Botão Sair
-tk.Button(
+# Botão Sair com estilo moderno
+botao_sair = tk.Button(
     frame,
-    text="Sair",
-    font=("Arial", 12, "bold"),
-    bg="#f44336",
-    fg="white",
-    padx=10,
-    pady=5,
+    text="SAIR",
+    font=("Helvetica", 10, "bold"),
+    bg="#B51E00",
+    fg="#E1BEE7",
+    padx=15,
+    pady=8,
+    bd=0,
+    cursor="hand2",
+    activebackground="#4A148C",
+    activeforeground="white",
     command=janela_login.quit
-).grid(row=4, column=0, columnspan=2, pady=(0, 10))
+)
+botao_sair.grid(row=4, column=0, columnspan=2, pady=(0, 10))
 
 # Focar no campo de usuário
 entrada_usuario.focus_set()
