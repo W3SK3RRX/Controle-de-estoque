@@ -4,8 +4,9 @@ from datetime import datetime
 import db
 import produtos
 import usuarios
+import backup
 import restore
-import categorias  # Importe seu módulo de categorias aqui (onde está o abrir_cadastro_categoria)
+import categorias
 
 def abrir_dashboard(usuario_logado):
     janela = tk.Tk()
@@ -110,8 +111,9 @@ def abrir_dashboard(usuario_logado):
         ("➕ Cadastrar Produto", lambda: produtos.abrir_cadastro_produto(usuario_logado)),
         ("👥 Gerenciar Usuários", lambda: abrir_sub_tela(usuarios.abrir_listagem_usuarios)),
         ("🪪 Cadastrar Novo Usuário", lambda: usuarios.abrir_cadastro_usuario(usuario_logado)),
-        ("♻️ Restaurar Backup", restore.restaurar_backup_mais_recente),
-        ("🔄 Sair", lambda: janela.destroy())
+        ("💾 Fazer Backup", lambda: backup.fazer_backup()),
+        ("♻️ Restaurar Backup", lambda: restore.restaurar_backup()),
+        ("🔄 Sair", lambda: janela.destroy()),
     ]
 
 

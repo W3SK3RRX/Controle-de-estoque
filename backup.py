@@ -1,19 +1,28 @@
 # backup.py
-import os
 import shutil
+import os
 from datetime import datetime
+from tkinter import filedialog, messagebox
 
-def realizar_backup():
-    origem = "estoque.db"
-    destino_dir = "backups"
-    if not os.path.exists(destino_dir):
-        os.makedirs(destino_dir)
+def fazer_backup():
+    try:
+        # Caminho original do banco
+        origem = "estoque.db"
 
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    destino = os.path.join(destino_dir, f"estoque_backup_{timestamp}.db")
+        if not os.path.exists(origem):
+            messagebox.showerror("Erro", "Banco de dados não encontrado.")
+            return
 
-    shutil.copy2(origem, destino)
-    print(f"Backup criado: {destino}")
+        # Solicita a pasta de destino
+        pasta_destino = filedialog.askdirectory(title="Selecione a pasta de destino para o backup")
+        if not pasta_destino:
+            return  # Usuário cancelou
 
-if __name__ == "__main__":
-    realizar_backup()
+        # Nome do arquivo com data e hora
+        nome_arquivo = f"backup_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.db"
+        destino = os.path.join(pasta_destino, nome_arquivo)
+
+        shutil.copy2(origem, destino)
+        messagebox.showinfo("Backup Realizado", f"Backup salvo com sucesso em:\n{destino}")
+    except Exception as e:
+        messagebox.showerror("Erro ao fazer backup", str(e))

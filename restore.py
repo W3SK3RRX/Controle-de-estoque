@@ -1,25 +1,27 @@
-# restore.py
-import os
 import shutil
-from tkinter import messagebox
+import os
+from tkinter import filedialog, messagebox
 
-def restaurar_backup_mais_recente():
-    pasta_backup = "backups"
-    if not os.path.exists(pasta_backup):
-        messagebox.showerror("Erro", "Nenhum diretório de backup encontrado.")
-        return
-
-    arquivos = [f for f in os.listdir(pasta_backup) if f.startswith("estoque_backup_") and f.endswith(".db")]
-    if not arquivos:
-        messagebox.showerror("Erro", "Nenhum arquivo de backup encontrado.")
-        return
-
-    arquivos = [f for f in os.listdir(pasta_backup) if f.endswith(".db")]
-    print(f"Arquivos encontrados: {arquivos}")
-    backup_mais_recente = os.path.join(pasta_backup, arquivos[0])
-
+def restaurar_backup():
     try:
-        shutil.copy2(backup_mais_recente, "estoque.db")
-        messagebox.showinfo("Sucesso", f"Banco restaurado com backup de:\n{backup_mais_recente}")
+        # Solicita ao usuário o arquivo de backup
+        caminho_backup = filedialog.askopenfilename(
+            title="Selecione o arquivo de backup",
+            filetypes=[("SQLite Database", "*.db")]
+        )
+
+        if not caminho_backup:
+            return  # Cancelado
+
+        destino = "estoque.db"  # Como o banco está na raiz
+
+        # Faz um backup do banco atual, se existir
+        if os.path.exists(destino):
+            shutil.copy2(destino, destino + ".bak")
+
+        # Restaura o backup selecionado
+        shutil.copy2(caminho_backup, destino)
+
+        messagebox.showinfo("Restaurado com Sucesso", "Backup restaurado com sucesso!")
     except Exception as e:
-        messagebox.showerror("Erro", f"Erro ao restaurar backup:\n{e}")
+        messagebox.showerror("Erro ao restaurar", str(e))
