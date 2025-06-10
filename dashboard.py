@@ -14,63 +14,72 @@ def abrir_dashboard(usuario_logado):
     janela.state('zoomed')
     janela.configure(bg="#eeeeee")
 
-    # ---------- Indicadores ----------
+    # ---------- Funções de Consulta ----------
     def contar_produtos():
-        conn = db.conectar()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM produtos")
-        total = cursor.fetchone()[0]
-        conn.close()
-        return total
+        try:
+            conn = db.conectar()
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM produtos")
+            total = cursor.fetchone()[0]
+            conn.close()
+            return total
+        except:
+            return "Erro"
 
     def contar_usuarios():
-        conn = db.conectar()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM usuarios")
-        total = cursor.fetchone()[0]
-        conn.close()
-        return total
+        try:
+            conn = db.conectar()
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM usuarios")
+            total = cursor.fetchone()[0]
+            conn.close()
+            return total
+        except:
+            return "Erro"
 
     def produtos_estoque_baixo():
-        conn = db.conectar()
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM produtos WHERE quantidade <= estoque_minimo")
-        total = cursor.fetchone()[0]
-        conn.close()
-        return total
+        try:
+            conn = db.conectar()
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM produtos WHERE quantidade <= estoque_minimo")
+            total = cursor.fetchone()[0]
+            conn.close()
+            return total
+        except:
+            return "Erro"
 
     def produtos_proximos_validade():
-        conn = db.conectar()
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT COUNT(*) FROM produtos 
-            WHERE validade IS NOT NULL AND date(validade) <= date('now', '+3 days')
-        """)
-        total = cursor.fetchone()[0]
-        conn.close()
-        return total
+        try:
+            conn = db.conectar()
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM produtos 
+                WHERE validade IS NOT NULL AND date(validade) <= date('now', '+3 days')
+            """)
+            total = cursor.fetchone()[0]
+            conn.close()
+            return total
+        except:
+            return "Erro"
 
     # ---------- Cabeçalho ----------
     header = tk.Frame(janela, bg="#790071", pady=20)
     header.pack(fill="x")
 
-    # Carregar e redimensionar a logo
     logo = tk.PhotoImage(file="media/logo.png")
-    logo = logo.subsample(4, 4)  # Reduz a imagem para 1/4 do tamanho original
+    logo = logo.subsample(4, 4)
     logo_label = tk.Label(header, image=logo, bg="#790071")
-    logo_label.image = logo  # Manter referência para evitar garbage collection
+    logo_label.image = logo
     logo_label.pack()
-    
+
     tk.Label(header, text=f"Bem-vindo, {usuario_logado}", font=("Segoe UI", 12), bg="#790071", fg="white").pack()
-    # Label para data e hora
     label_hora = tk.Label(header, font=("Segoe UI", 10), bg="#790071", fg="white")
     label_hora.pack()
 
-    # Função para atualizar data e hora em tempo real
     def atualizar_hora():
         agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         label_hora.config(text=agora)
-        label_hora.after(1000, atualizar_hora)  # atualiza a cada 1000 ms (1 segundo)
+        label_hora.after(1000, atualizar_hora)
 
     atualizar_hora()
 
@@ -78,32 +87,46 @@ def abrir_dashboard(usuario_logado):
     frame_info = tk.Frame(janela, bg="#eeeeee", pady=20)
     frame_info.pack()
 
-    def criar_card(titulo, valor, emoji, cor):
+    def criar_card(titulo, obter_valor_func, emoji, cor):
         card = tk.Frame(frame_info, bg=cor, width=250, height=100, relief="raised", bd=2)
         card.pack_propagate(0)
         tk.Label(card, text=emoji, font=("Segoe UI Emoji", 24), bg=cor).pack(pady=(5, 0))
         tk.Label(card, text=titulo, font=("Segoe UI", 10, "bold"), bg=cor).pack()
-        tk.Label(card, text=valor, font=("Segoe UI", 14, "bold"), bg=cor).pack()
-        return card
+        label_valor = tk.Label(card, text=obter_valor_func(), font=("Segoe UI", 14, "bold"), bg=cor)
+        label_valor.pack()
+        return card, label_valor, obter_valor_func
 
-    cards = [
-        criar_card("Produtos", contar_produtos(), "📦", "#ffffff"),
-        criar_card("Estoque Baixo", produtos_estoque_baixo(), "⚠️", "#ffffff"),
-        criar_card("Próx. Validade", produtos_proximos_validade(), "⏰", "#ffffff"),
-        criar_card("Usuários", contar_usuarios(), "🧑‍💻", "#ffffff")
+    cards_info = [
+        ("Produtos", contar_produtos, "📦", "#ffffff"),
+        ("Estoque Baixo", produtos_estoque_baixo, "⚠️", "#ffffff"),
+        ("Próx. Validade", produtos_proximos_validade, "⏰", "#ffffff"),
+        ("Usuários", contar_usuarios, "🧑‍💻", "#ffffff")
     ]
 
-    for i, card in enumerate(cards):
+    cards_widgets = []
+    for i, (titulo, func, emoji, cor) in enumerate(cards_info):
+        card, label_valor, func_valor = criar_card(titulo, func, emoji, cor)
         card.grid(row=0, column=i, padx=15)
+        cards_widgets.append((label_valor, func_valor))
+
+    def atualizar_cards():
+        for label, func in cards_widgets:
+            try:
+                novo_valor = func()
+                label.config(text=novo_valor)
+            except:
+                label.config(text="Erro")
+        janela.after(3000, atualizar_cards)  # Atualiza a cada 3 segundos
+
+    atualizar_cards()
 
     # ---------- Botões ----------
     frame_botoes = tk.Frame(janela, bg="#eeeeee")
     frame_botoes.pack(pady=30)
 
     def abrir_sub_tela(func):
-        janela.withdraw()
         func(usuario_logado)
-        janela.deiconify()
+
 
     botoes = [
         ("📦 Gestão de Produtos", lambda: abrir_sub_tela(produtos.abrir_listagem_produtos)),
@@ -115,7 +138,6 @@ def abrir_dashboard(usuario_logado):
         ("♻️ Restaurar Backup", lambda: restore.restaurar_backup()),
         ("🔄 Sair", lambda: janela.destroy()),
     ]
-
 
     for i, (texto, comando) in enumerate(botoes):
         btn = tk.Button(
@@ -135,7 +157,6 @@ def abrir_dashboard(usuario_logado):
         btn.grid(row=i//4, column=i%4, padx=15, pady=10)
 
     janela.mainloop()
-
 
 # Teste isolado
 if __name__ == "__main__":

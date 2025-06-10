@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 def abrir_cadastro_produto(usuario_logado):
     janela = tk.Toplevel()
+    janela.state('zoomed')
     janela.title("Cadastrar Produto")
     janela.geometry("600x600")
     janela.configure(bg="#e9ecef")
@@ -122,8 +123,8 @@ def obter_categorias():
 
 def abrir_listagem_produtos(usuario_logado):
     janela = tk.Toplevel()
-    janela.title("Gestão de Produtos")
     janela.state('zoomed')
+    janela.title("Gestão de Produtos")
     janela.configure(bg="#f0f0f0")
 
     frame = tk.Frame(janela, bg="white", bd=2, relief="groove")

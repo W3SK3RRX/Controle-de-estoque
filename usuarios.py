@@ -6,6 +6,7 @@ import log_helper
 
 def abrir_cadastro_usuario(usuario_logado):
     janela = tk.Toplevel()
+    janela.state('zoomed')
     janela.title("Cadastro de Usuário")
     janela.geometry("400x300")
     janela.configure(bg="#f0f0f0")
@@ -56,6 +57,7 @@ def abrir_cadastro_usuario(usuario_logado):
 
 def abrir_listagem_usuarios(usuario_logado):
     janela = tk.Toplevel()
+    janela.state('zoomed')
     janela.title("Gerenciar Usuários")
     janela.geometry("500x400")
     janela.configure(bg="#f0f0f0")

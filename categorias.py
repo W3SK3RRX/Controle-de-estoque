@@ -6,6 +6,7 @@ import log_helper
 
 def abrir_cadastro_categoria(usuario_logado):
     janela = tk.Toplevel()
+    janela.state('zoomed')
     janela.title("Cadastro de Categorias")
     janela.geometry("600x600")
     janela.configure(bg="#f0f0f0")
