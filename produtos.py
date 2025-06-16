@@ -197,8 +197,10 @@ def abrir_listagem_produtos(usuario_logado):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao carregar categorias: {e}")
 
-    # Função para carregar dados na tabela
+
     def carregar_dados():
+        tree.tag_configure("estoque_baixo", background="#ffcccc", foreground="red")
+
         for item in tree.get_children():
             tree.delete(item)
 
@@ -230,6 +232,9 @@ def abrir_listagem_produtos(usuario_logado):
         hoje = datetime.now().date()
 
         for p in produtos:
+            estoque_atual = p[3]
+            estoque_minimo = p[6]
+
             validade_str = p[5]
             try:
                 validade = datetime.strptime(validade_str, "%Y-%m-%d").date()
@@ -238,16 +243,22 @@ def abrir_listagem_produtos(usuario_logado):
 
             if validade:
                 if validade < hoje:
-                    cor = "#f8d7da"  # vermelho claro - vencido
+                    cor = "#f8d7da"  # vencido
                 elif validade <= hoje + timedelta(days=7):
-                    cor = "#fff3cd"  # amarelo claro - perto do vencimento
+                    cor = "#fff3cd"  # vence em breve
                 else:
-                    cor = "#d4edda"  # verde claro - validade ok
+                    cor = "#d4edda"  # validade ok
             else:
-                cor = "white"  # Sem validade cadastrada
+                cor = "white"  # sem validade
 
-            tree.insert("", tk.END, values=p, tags=(str(p[0]),))
+            # Cor de estoque baixo tem prioridade
+            if estoque_atual < estoque_minimo:
+                tree.insert("", tk.END, values=p, tags=("estoque_baixo",))
+            else:
+                tree.insert("", tk.END, values=p, tags=(str(p[0]),))
+
             tree.tag_configure(str(p[0]), background=cor)
+
 
     carregar_categorias()
     carregar_dados()

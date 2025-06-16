@@ -1,10 +1,26 @@
 import sqlite3
+import os
+import sys
 from pathlib import Path
 
-# Pasta do banco
-Path("database").mkdir(exist_ok=True)
+def resource_path(relative_path):
+    # Quando rodando via PyInstaller, _MEIPASS aponta para os arquivos extraídos
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
 
-DB_PATH = "estoque.db"
+    return os.path.join(base_path, relative_path)
+
+# Caminho real do banco (fora do .exe, ao lado dele)
+def get_db_path():
+    if getattr(sys, 'frozen', False):  # se rodando como .exe
+        base = os.path.dirname(sys.executable)
+    else:
+        base = os.path.dirname(__file__)
+    return os.path.join(base, "estoque.db")
+
+DB_PATH = get_db_path()
 
 def conectar():
     return sqlite3.connect(DB_PATH)
@@ -58,7 +74,6 @@ def criar_usuario_padrao():
     conn = conectar()
     cursor = conn.cursor()
 
-    # Verifica se já existe usuário
     cursor.execute("SELECT * FROM usuarios")
     if not cursor.fetchone():
         cursor.execute("INSERT INTO usuarios (nome, senha) VALUES (?, ?)", ('admin', '123'))

@@ -1,12 +1,23 @@
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
+import os
+import sys
+
 import db
 import produtos
 import usuarios
 import backup
 import restore
 import categorias
+
+# Função para localizar arquivos mesmo dentro do executável PyInstaller
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  # Diretório temporário do PyInstaller
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def abrir_dashboard(usuario_logado):
     janela = tk.Tk()
@@ -66,7 +77,7 @@ def abrir_dashboard(usuario_logado):
     header = tk.Frame(janela, bg="#790071", pady=20)
     header.pack(fill="x")
 
-    logo = tk.PhotoImage(file="media/logo.png")
+    logo = tk.PhotoImage(file=resource_path("media/logo.png"))
     logo = logo.subsample(4, 4)
     logo_label = tk.Label(header, image=logo, bg="#790071")
     logo_label.image = logo
@@ -116,7 +127,7 @@ def abrir_dashboard(usuario_logado):
                 label.config(text=novo_valor)
             except:
                 label.config(text="Erro")
-        janela.after(3000, atualizar_cards)  # Atualiza a cada 3 segundos
+        janela.after(3000, atualizar_cards)
 
     atualizar_cards()
 
@@ -126,7 +137,6 @@ def abrir_dashboard(usuario_logado):
 
     def abrir_sub_tela(func):
         func(usuario_logado)
-
 
     botoes = [
         ("📦 Gestão de Produtos", lambda: abrir_sub_tela(produtos.abrir_listagem_produtos)),
